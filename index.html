@@ -27,7 +27,7 @@
     }
 
     function generateURL(saiseisu,tag){
-      const url = `http://api.search.nicovideo.jp/api/v2/video/contents/search?q=${tag}&targets=tagsExact&fields=title,viewCounter,commentCounter,mylistCounter&filters[viewCounter][lte]=${saiseisu}&_sort=-lastCommentTime&_offset=0&_limit=50&_context=apiguide&filters[viewCounter][gte]=${saiseisu}`;
+      const url = `https://api.search.nicovideo.jp/api/v2/video/contents/search?q=${tag}&targets=tagsExact&fields=title,viewCounter,commentCounter,mylistCounter&filters[viewCounter][lte]=${saiseisu}&_sort=-lastCommentTime&_offset=0&_limit=50&_context=apiguide&filters[viewCounter][gte]=${saiseisu}`;
       return url;
     }
 
