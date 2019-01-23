@@ -1,0 +1,57 @@
+<html>
+<head>
+  <title>VocaMiner</title>
+  <style>
+  </style>
+</head>
+<body>
+  <div id="user">
+    <button id="ajaxButton" type="button">Search</button>
+  </div>
+  <div id="result">
+
+  </div>
+<script>
+  (function(){
+
+    let xhr;
+    document.getElementById("ajaxButton").addEventListener('click', makeRequest);
+
+    function generateSaiseisu(){
+      const threshold = [0, 300, 3000, 30000];
+      const layerNum = [0,1,1,1,1,2];
+      const layerIdx = layerNum[Math.floor(Math.random() * layerNum.length)]; // 0,1,2
+      const saiseisu = Math.floor(Math.random() * (threshold[layerIdx+1] - threshold[layerIdx])) + threshold[layerIdx];
+      return saiseisu;
+      //document.getElementById("result").innerHTML = `Saiseisu: ${saiseisu}`;
+    }
+
+    function generateURL(saiseisu,tag){
+      const url = `http://api.search.nicovideo.jp/api/v2/video/contents/search?q=${tag}&targets=tagsExact&fields=title,viewCounter,commentCounter,mylistCounter&filters[viewCounter][lte]=${saiseisu}&_sort=-lastCommentTime&_offset=0&_limit=50&_context=apiguide&filters[viewCounter][gte]=${saiseisu}`;
+      return url;
+    }
+
+    function makeRequest(){
+      let saiseisu = generateSaiseisu(); 
+      let url = generateURL(saiseisu, "ミクオリジナル曲");
+      xhr = new XMLHttpRequest();
+      if(!xhr) return false;
+      xhr.onreadystatechange = drawResult;
+      xhr.open('GET',url);
+      xhr.send();
+    }
+
+    function drawResult(){
+      if(xhr.status === 200){
+        const response = JSON.parse(xhr.responseText);
+        const totalCount = response.meta.totalCount;
+        const data = response.data[Math.floor(Math.random()*totalCount)];
+        document.getElementById("result").innerHTML = `OK: totalCount ${totalCount}, title ${data.title}, viewCounter ${viewcounter}`;
+      }else{
+        document.getElementById("result").innerHTML = `ERROR: xhr.status ${xhr.status}`;
+      }
+    }
+  })();
+</script>
+</body>
+</html>
