@@ -100,7 +100,7 @@
                 let movieTitleElem = document.getElementById('movie-title');
                 while(playerElem.firstChild) playerElem.removeChild(playerElem.firstChild);
                 movieTitleElem.innerHTML = 'loading...';
-                fetch("http://rigorous-wholesaler.glitch.me")
+                fetch("https://rigorous-wholesaler.glitch.me")
                 .then((result) => {
                     return result.json();
                 })
@@ -110,7 +110,7 @@
                     else movieTitleElem.innerHTML = response.title;
                     if(response.contentId === null) return;
                     let playerElem = document.getElementById('player');
-                    let baseURI = 'http://ext.nicovideo.jp/thumb_watch/';
+                    let baseURI = 'https://ext.nicovideo.jp/thumb_watch/';
                     let playerOption = '?w=640&h=360';
                     let scriptElem = document.createElement('script');
                     scriptElem.setAttribute('type', 'text/javascript');
