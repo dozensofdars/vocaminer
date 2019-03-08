@@ -75,6 +75,7 @@
                 </p>
             </div>
             <button id="fetchButton" onclick=nicoFetch()> Push to Search </button>
+            <a id="tweetButton" target="blank" href="http://twitter.com/intent/tweet?text=ボカロ曲発掘サービス VocaMiner を使ってみた！&url=https://yumuta.github.io/vocaminer/&hashtags=VocaMiner"><i class="fa fa-twitter"></i> Share on Twitter</a>
         </div>
         <div id="footer" class="flexbox-column width-80 padding-tb-20">
             <p>
@@ -99,7 +100,7 @@
                 let movieTitleElem = document.getElementById('movie-title');
                 while(playerElem.firstChild) playerElem.removeChild(playerElem.firstChild);
                 movieTitleElem.innerHTML = 'loading...';
-                fetch("https://rigorous-wholesaler.glitch.me")
+                fetch("http://rigorous-wholesaler.glitch.me")
                 .then((result) => {
                     return result.json();
                 })
@@ -116,6 +117,7 @@
                     scriptElem.setAttribute('src', baseURI+response.contentId+playerOption);
                     playerElem.appendChild(scriptElem);
                     if(!playerElem.firstChild) playerElem.innerHTML = "Cannot get movie data";
+                    document.getElementById('tweetButton').setAttribute('href',`http://twitter.com/intent/tweet?text=ボカロ曲発掘サービス VocaMiner (https://yumuta.github.io/vocaminer/) で「${response.title}」を見つけたよ！&url=https://nico.ms/${response.contentId}?ref=twitter&hashtags=${response.contentId}`);
                 })
                 .catch(()=>{
                     document.getElementById('movie-title').innerHTML = "Server Error: Sorry, maintenance is needed...";
