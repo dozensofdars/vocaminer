@@ -1,57 +1,131 @@
-<html>
-<head>
-  <title>VocaMiner</title>
-  <style>
-  </style>
-</head>
-<body>
-  <div id="user">
-    <button id="ajaxButton" type="button">Search</button>
-  </div>
-  <div id="result">
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <title>VocaMiner - ボカロ曲発掘サービス</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <style type="text/css">
+            * {
+                margin:0px;
+                padding:0px;
+            }
 
-  </div>
-<script>
-  (function(){
+            .width-100 {
+                width: 100%;
+            }
 
-    let xhr;
-    document.getElementById("ajaxButton").addEventListener('click', makeRequest);
+            .width-80 {
+                width: 80%;
+            }
 
-    function generateSaiseisu(){
-      const threshold = [0, 300, 3000, 30000];
-      const layerNum = [0,1,1,1,1,2];
-      const layerIdx = layerNum[Math.floor(Math.random() * layerNum.length)]; // 0,1,2
-      const saiseisu = Math.floor(Math.random() * (threshold[layerIdx+1] - threshold[layerIdx])) + threshold[layerIdx];
-      return saiseisu;
-      //document.getElementById("result").innerHTML = `Saiseisu: ${saiseisu}`;
-    }
+            .padding-tb-20{
+                padding: 20px 0px 20px 0px;
+            }
 
-    function generateURL(saiseisu,tag){
-      const url = `https://api.search.nicovideo.jp/api/v2/video/contents/search?q=${tag}&targets=tagsExact&fields=title,viewCounter,commentCounter,mylistCounter&filters[viewCounter][lte]=${saiseisu}&_sort=-lastCommentTime&_offset=0&_limit=50&_context=apiguide&filters[viewCounter][gte]=${saiseisu}`;
-      return url;
-    }
+            .flexbox-column{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
 
-    function makeRequest(){
-      let saiseisu = generateSaiseisu(); 
-      let url = generateURL(saiseisu, "ミクオリジナル曲");
-      xhr = new XMLHttpRequest();
-      if(!xhr) return false;
-      xhr.onreadystatechange = drawResult;
-      xhr.open('GET',url);
-      xhr.send();
-    }
+            #app {
+                color: #000020;
+            }
 
-    function drawResult(){
-      if(xhr.status === 200){
-        const response = JSON.parse(xhr.responseText);
-        const totalCount = response.meta.totalCount;
-        const data = response.data[Math.floor(Math.random()*totalCount)];
-        document.getElementById("result").innerHTML = `OK: totalCount ${totalCount}, title ${data.title}, viewCounter ${viewcounter}`;
-      }else{
-        document.getElementById("result").innerHTML = `ERROR: xhr.status ${xhr.status}`;
-      }
-    }
-  })();
-</script>
-</body>
+            #header {    
+                background-color: aliceblue;           
+            }
+
+            #content{
+
+            }
+
+            #content > * {
+                margin-bottom: 20px;
+            }
+
+            #footer {
+                text-align: center; 
+            }
+
+            #fetchButton{
+                background-color: white;
+                text-align: center;
+                width: 160px;
+                height: 40px;
+                border: 1.5px #000020 solid;
+                border-radius: 8px;
+            }
+        </style>
+    </head>
+    <body>
+    <div id="app" class="flexbox-column">
+        <div id="header" class="flexbox-column width-100 padding-tb-20">
+            <h1>VocaMiner</h1>
+            <p>試験運用中 3/9-11 初音ミク曲のみ</p>
+        </div>
+        <div id="content" class="flexbox-column width-80 padding-tb-20">
+            <h2 id="movie-title"></h2>
+            <div id="player">
+                <p>
+                    ご利用前の注意：現状でのご提供となります。サービス改善または維持に対応しきれない可能性もございます。通信費や、表示されるコンテンツ内容など、ご利用は自己責任で行ってください。
+                </p>
+                <p>
+                    Notice: We provide this service As-Is. We cannot guarantee any update, or any maintenance. Please use this service at your own risk. We do not take any responsibility for your use.
+                </p>
+            </div>
+            <button id="fetchButton" onclick=nicoFetch()> Push to Search </button>
+        </div>
+        <div id="footer" class="flexbox-column width-80 padding-tb-20">
+            <p>
+                <small>使い方：Push to Searchを押す=>ボカロ曲がランダムで発掘される　以上</small>
+            </p>
+            <p>
+                <small>表示されない時：「No Result: Please try again!」と出るときは、不具合ではないので30秒ほど間をおいてもう一度お試しください。
+                    それ以外のメッセージが出たら不具合が起きているので作者twitter(@yumuta_official)にご一報ください。
+                </small>
+            </p>
+            <p>
+                <small>This service uses <a href="http://site.nicovideo.jp/search-api-docs/search.html" target="blank">niconico contents-search API</a> and player API (http://ext.nicovideo.jp/thumb_watch/sm*). Copyright of each suggested movie belongs to creator. </small>
+            </p>
+            <p>
+                <small>Contact developer on Twitter: <a href="https://twitter.com/yumuta_official">@yumuta_official</a></small>
+            </p>
+        </div>
+    </div>
+        <script>
+            let nicoFetch = () => {
+                let playerElem = document.getElementById('player');
+                let movieTitleElem = document.getElementById('movie-title');
+                while(playerElem.firstChild) playerElem.removeChild(playerElem.firstChild);
+                movieTitleElem.innerHTML = 'loading...';
+                fetch("https://rigorous-wholesaler.glitch.me")
+                .then((result) => {
+                    return result.json();
+                })
+                .then((response) => {
+                    if(response.title === 'noResult') movieTitleElem.innerHTML = 'No Result: Please try again!';
+                    else if(response.title === 'fetchError') movieTitleElem.innerHTML = 'Niconico API response error: Sorry, wait for a minute...';
+                    else movieTitleElem.innerHTML = response.title;
+                    if(response.contentId === null) return;
+                    let playerElem = document.getElementById('player');
+                    let baseURI = 'http://ext.nicovideo.jp/thumb_watch/';
+                    let playerOption = '?w=640&h=360';
+                    let scriptElem = document.createElement('script');
+                    scriptElem.setAttribute('type', 'text/javascript');
+                    scriptElem.setAttribute('src', baseURI+response.contentId+playerOption);
+                    playerElem.appendChild(scriptElem);
+                    if(!playerElem.firstChild) playerElem.innerHTML = "Cannot get movie data";
+                })
+                .catch(()=>{
+                    document.getElementById('movie-title').innerHTML = "Server Error: Sorry, maintenance is needed...";
+                })
+                .finally(()=>{
+                    scriptElem = null;
+                    playerElem = null;
+                    movieTitleElem = null;
+                });
+            }
+        </script>
+    </body>
 </html>
