@@ -109,21 +109,27 @@
                     else if(response.title === 'fetchError') movieTitleElem.innerHTML = 'Niconico API response error: Sorry, wait for a minute...';
                     else movieTitleElem.innerHTML = response.title;
                     if(response.contentId === null) return;
-                    let playerElem = document.getElementById('player');
-                    let baseURI = 'https://ext.nicovideo.jp/thumb_watch/';
-                    let playerOption = '?w=640&h=360';
-                    let scriptElem = document.createElement('script');
-                    scriptElem.setAttribute('type', 'text/javascript');
-                    scriptElem.setAttribute('src', baseURI+response.contentId+playerOption);
-                    playerElem.appendChild(scriptElem);
-                    if(!playerElem.firstChild) playerElem.innerHTML = "Cannot get movie data";
+                    let contentId = response.contentId;
+                    if(contentId.match('sm')){
+                        let baseURI = 'https://ext.nicovideo.jp/thumb_watch/';
+                        let playerOption = '?w=640&h=360';
+                        let scriptElem = document.createElement('script');
+                        scriptElem.setAttribute('type', 'text/javascript');
+                        scriptElem.setAttribute('src', baseURI+contentId+playerOption);
+                        playerElem.appendChild(scriptElem);
+                        scriptElem = null;
+                    }
+                    else if(contentId.match('nm')) {
+                        playerElem.innerHTML = `<a href="https://www.nicovideo.jp/watch/${contentId}" target="blank">${contentId}</a>`;
+                    } else {
+                        playerElem.innerHTML = 'Cannot get movie data.';
+                    }
                     document.getElementById('tweetButton').setAttribute('href',`http://twitter.com/intent/tweet?text=ボカロ曲発掘サービス VocaMiner (https://yumuta.github.io/vocaminer/) で「${response.title}」を見つけたよ！&url=https://nico.ms/${response.contentId}?ref=twitter&hashtags=${response.contentId}`);
                 })
                 .catch(()=>{
                     document.getElementById('movie-title').innerHTML = "Server Error: Sorry, maintenance is needed...";
                 })
                 .finally(()=>{
-                    scriptElem = null;
                     playerElem = null;
                     movieTitleElem = null;
                 });
