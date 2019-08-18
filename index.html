@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
     <head>
-        <title>VocaMiner - ボカロ曲発掘サービス</title>
+        <title>ボカロ曲発掘お助けサービス「VocaMiner」</title>
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <script src="https://kit.fontawesome.com/6bdd13eaf2.js"></script>
         <style type="text/css">
             * {
                 margin:0px;
@@ -28,16 +29,27 @@
                 justify-content: center;
             }
 
-            #app {
-                color: #000020;
+            .flexbox-row{
+                display: flex;
+                flex-flow: row wrap;
+                align-items: center;
+                justify-content: center;
+            }
+
+            body {
+                background-color: #336;
+                color: #EEE;
             }
 
             #header {    
-                background-color: aliceblue;           
+                background-color: #EEE;
+                color: #336;           
             }
 
-            #content{
-
+            a {
+                color: #99C;
+                font-weight: bold;
+                text-decoration: none;
             }
 
             #content > * {
@@ -49,11 +61,37 @@
             }
 
             #fetchButton{
-                background-color: white;
+                background-color: #EEE;
+                color:#336;
+                font-size: 1.4em;
+                font-weight: bold;
                 text-align: center;
                 width: 160px;
                 height: 40px;
-                border: 1.5px #000020 solid;
+                border-radius: 8px;
+            }
+
+            form {
+                margin-top: 1em;
+            }
+
+            input[type="radio"] {
+                display: none;
+            }
+
+            input[type="radio"]:checked + label {
+                background-color: #113;
+                color: #EEE;                
+            }
+
+            label {
+                box-sizing: border-box;
+                background-color: #EEE;
+                color: #336;
+                font-size: 0.8em;
+                font-weight: bold;
+                padding: 0.5em 1em;
+                margin: 0.5em;
                 border-radius: 8px;
             }
         </style>
@@ -62,51 +100,93 @@
     <div id="app" class="flexbox-column">
         <div id="header" class="flexbox-column width-100 padding-tb-20">
             <h1>VocaMiner</h1>
-            <p>試験運用中 3/9-11 初音ミク曲のみ</p>
+            <p>ボカロ曲発掘お助けサービス</p>
         </div>
         <div id="content" class="flexbox-column width-80 padding-tb-20">
             <h2 id="movie-title"></h2>
             <div id="player">
                 <p>
-                    ご利用前の注意：現状でのご提供となります。サービス改善または維持に対応しきれない可能性もございます。通信費や、表示されるコンテンツ内容など、ご利用は自己責任で行ってください。
-                </p>
-                <p>
-                    Notice: We provide this service As-Is. We cannot guarantee any update, or any maintenance. Please use this service at your own risk. We do not take any responsibility for your use.
+                    ご利用前に「ご注意」をお読みください。
                 </p>
             </div>
-            <button id="fetchButton" onclick=nicoFetch()> Push to Search </button>
-            <a id="tweetButton" target="blank" href="http://twitter.com/intent/tweet?text=ボカロ曲発掘サービス VocaMiner を使ってみた！&url=https://yumuta.github.io/vocaminer/&hashtags=VocaMiner"><i class="fa fa-twitter"></i> Share on Twitter</a>
+            <button id="fetchButton" onclick=nicoFetch()> <i class="fas fa-search"></i> 検索 </button>
+            <a id="tweetButton" target="blank" href="http://twitter.com/intent/tweet?text=ボカロ曲発掘サービス VocaMiner を使ってみた！&url=https://yumuta.github.io/vocaminer/&hashtags=VocaMiner">
+                <i class="fab fa-twitter"></i>
+                Share on Twitter
+            </a>
         </div>
-        <div id="footer" class="flexbox-column width-80 padding-tb-20">
-            <p>
-                <small>使い方：Push to Searchを押す=>ボカロ曲がランダムで発掘される　以上</small>
-            </p>
-            <p>
-                <small>表示されない時：「No Result: Please try again!」と出るときは、不具合ではないので30秒ほど間をおいてもう一度お試しください。
-                    それ以外のメッセージが出たら不具合が起きているので作者twitter(@yumuta_official)にご一報ください。
-                </small>
-            </p>
-            <p>
-                <small>This service uses <a href="http://site.nicovideo.jp/search-api-docs/search.html" target="blank">niconico contents-search API</a> and player API (http://ext.nicovideo.jp/thumb_watch/sm*). Copyright of each suggested movie belongs to creator. </small>
-            </p>
-            <p>
-                <small>Contact developer on Twitter: <a href="https://twitter.com/yumuta_official">@yumuta_official</a></small>
-            </p>
+        <div class="flexbox-column width-80 padding-tb-20">
+            <h2>検索オプション</h2>
+            <!-- <div id="debug"></div> -->
+            <form id="search-option" class="flexbox-column width-80">
+                <h3>再生数</h3>
+                <div class="flexbox-row">
+                    <input type="radio" name="view" id="option-view-default" value="0,100000" checked>
+                    <label for="option-view-default">おまかせ</label>
+                    <input type="radio" name="view" id="option-view-300" value="0,300">
+                    <label for="option-view-300">- 300</label>
+                    <input type="radio" name="view" id="option-view-1000" value="300,1000">
+                    <label for="option-view-1000">300 - 1000</label>
+                    <input type="radio" name="view" id="option-view-3000" value="1000,3000">
+                    <label for="option-view-3000">1000 - 3000</label>
+                    <input type="radio" name="view" id="option-view-10000" value="3000,10000">
+                    <label for="option-view-10000">3000 - 10000</label>
+                    <input type="radio" name="view" id="option-view-30000" value="1000,30000">
+                    <label for="option-view-30000">10000 - 30000</label>
+                </div>
+                <h3>キャラクター</h3>
+                <div class="flexbox-row">
+                    <input type="radio" name="q" id="option-vocaloid" value="VOCALOIDオリジナル曲" checked>
+                    <label for="option-vocaloid">おまかせ</label>
+                    <input type="radio" name="q" id="option-miku" value="ミクオリジナル曲">
+                    <label for="option-miku">初音ミク</label>
+                    <input type="radio" name="q" id="option-rin" value="リンオリジナル曲">
+                    <label for="option-rin">鏡音リン</label>
+                    <input type="radio" name="q" id="option-ren" value="レンオリジナル曲">
+                    <label for="option-ren">鏡音レン</label>
+                    <input type="radio" name="q" id="option-kagamine" value="鏡音オリジナル曲">
+                    <label for="option-kagamine">鏡音リン＆レン</label>
+                    <input type="radio" name="q" id="option-luka" value="ルカオリジナル曲">
+                    <label for="option-luka">巡音ルカ</label>
+                    <input type="radio" name="q" id="option-meiko" value="MEIKOオリジナル曲">
+                    <label for="option-meiko">MEIKO</label>
+                    <input type="radio" name="q" id="option-kaito" value="KAITOオリジナル曲">
+                    <label for="option-kaito">KAITO</label>
+                    <input type="radio" name="q" id="option-gumi" value="GUMIオリジナル曲">
+                    <label for="option-gumi">GUMI</label>
+                    <input type="radio" name="q" id="option-una" value="ウナオリジナル曲">
+                    <label for="option-una">音街ウナ</label>
+                </div>
+            </form>
         </div>
     </div>
         <script>
             let nicoFetch = () => {
+                // get DOM
                 let playerElem = document.getElementById('player');
                 let movieTitleElem = document.getElementById('movie-title');
+                let optionElem = document.getElementById('search-option');
                 while(playerElem.firstChild) playerElem.removeChild(playerElem.firstChild);
+
+                // set viewcount
+                const gte = Number(optionElem.view.value.split(',')[0]);
+                const lte = Number(optionElem.view.value.split(',')[1]);
+                const viewCountRange = lte - gte;
+                const binWidth = Math.floor(viewCountRange / 100);
+                const queryGte = gte + binWidth * Math.floor(Math.random() * 100);
+                const queryLte = queryGte + binWidth;
+
+                // fetch
                 movieTitleElem.innerHTML = 'loading...';
-                fetch("https://rigorous-wholesaler.glitch.me")
+                // document.getElementById('debug').innerHTML = `${queryGte} ${binWidth} ${queryLte}`;
+                // fetch("https://rigorous-wholesaler.glitch.me")
+                fetch(`http://localhost:8080/?q=${optionElem.q.value}&viewgte=${queryGte}&viewlte=${queryLte}`)
                 .then((result) => {
                     return result.json();
                 })
                 .then((response) => {
-                    if(response.title === 'noResult') movieTitleElem.innerHTML = 'No Result: Please try again!';
-                    else if(response.title === 'fetchError') movieTitleElem.innerHTML = 'Niconico API response error: Sorry, wait for a minute...';
+                    if(response.title === 'noResult') movieTitleElem.innerHTML = '結果がありません。もう一度お試しください。このメッセージが10回以上続くようでしたら、検索オプションを変えて試してみてください。';
+                    else if(response.title === 'fetchError') movieTitleElem.innerHTML = 'API レスポンスエラー。時間をおいてもう一度お試しください。';
                     else movieTitleElem.innerHTML = response.title;
                     if(response.contentId === null) return;
                     let contentId = response.contentId;
@@ -124,7 +204,7 @@
                     } else {
                         playerElem.innerHTML = 'Cannot get movie data.';
                     }
-                    document.getElementById('tweetButton').setAttribute('href',`http://twitter.com/intent/tweet?text=ボカロ曲発掘サービス VocaMiner (https://yumuta.github.io/vocaminer/) で「${response.title}」を見つけたよ！&url=https://nico.ms/${response.contentId}?ref=twitter&hashtags=${response.contentId}`);
+                    document.getElementById('tweetButton').setAttribute('href',`http://twitter.com/intent/tweet?text=${response.title} found by ボカロ曲発掘サービス「VocaMiner」&url=https://nico.ms/${response.contentId}?ref=twitter&hashtags=VocaMiner`);
                 })
                 .catch(()=>{
                     document.getElementById('movie-title').innerHTML = "Server Error: Sorry, maintenance is needed...";
@@ -132,6 +212,7 @@
                 .finally(()=>{
                     playerElem = null;
                     movieTitleElem = null;
+                    optionElem = null;
                 });
             }
         </script>
