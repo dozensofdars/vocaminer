@@ -1,48 +1,33 @@
 const http = require('http');
+const fetch = require('node-fetch');
 
-const getData = (url) => {
+const getData = async(url) => {
     const localURL = new URL('http://yumuta.github.io/vocaminer/'+url);
     const requestURL = new URL('http://api.search.nicovideo.jp/api/v2/video/contents/search');
-    requestURL.searchParams.set('q', localURL.searchParams.get('q') || 'ミクオリジナル曲');
-    requestURL.searchParams.set('targets', 'tagsExact');
-    requestURL.searchParams.set('filters[viewCounter][gte]', localURL.searchParams.get('viewgte') || 100);
-    requestURL.searchParams.set('filters[viewCounter][lte]', localURL.searchParams.get('viewlte') || 1000);
-    requestURL.searchParams.set('_limit', 1);
+    const param = requestURL.searchParams;
+    param.set('q', localURL.searchParams.get('q') || 'ミクオリジナル曲');
+    param.set('targets', 'tagsExact');
+    param.set('filters[viewCounter][gte]', localURL.searchParams.get('viewgte') || 100);
+    param.set('filters[viewCounter][lte]', localURL.searchParams.get('viewlte') || 1000);
+    param.set('_limit', 1);
     // TODO: ソート方法をランダマイズ
-    requestURL.searchParams.set('_sort', '-lastCommentTime');
+    param.set('_sort', '-lastCommentTime');
     // TODO: contextはvocaminerでよさそう
-    requestURL.searchParams.set('_context', 'apiguide');
-    return new Promise((resolve, reject)=>{
-        http.get(requestURL.href, res => {
-            const count = res.headers['x-total-count'];
-            requestURL.searchParams.set('fields', 'contentId,title');
-            requestURL.searchParams.set('_offset', getOffset(count));
-            http.get(requestURL.href, (res1) => {
-                let chunk = "";
-                res1.on('data', (receivedData) => {
-                    chunk += receivedData
-                }).on('end', () => {
-                    let json = null;
-                    try {
-                        json = JSON.parse(chunk);
-                    } catch (e) {
-                        reject('JSON parse error');
-                        return;
-                    }
-                    if (json.meta.status !== 200) {
-                        reject('response is not 200');
-                        return;
-                    }
-                    const movieNum = json.data.length;
-                    if (movieNum === 0) reject('noResult');
-                    resolve(json.data[0]);
-                });
-            }).on('error', (e) => {
-                reject(e);
-            }).end();
-        }).on('error', (e) => {
-            reject(e);
-        }).end();
+    param.set('_context', 'apiguide');
+    return new Promise(async(resolve, reject)=>{
+        try {
+            const res = await fetch(requestURL);
+            const count = await res.headers.get('x-total-count');
+            param.set('fields', 'contentId,title');
+            param.set('_offset', getOffset(count));
+            const res2 = await fetch(requestURL);
+            const json = await res2.json();
+            if (json.meta.status !== 200) return reject('response is not 200');
+            if (json.data.length === 0) return reject('noResult');
+            return resolve(json.data[0]);
+        } catch (e) {
+            return reject(e);
+        }
     });
 };
 
