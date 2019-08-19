@@ -7,8 +7,14 @@ const getData = async(url) => {
     const param = requestURL.searchParams;
     param.set('q', localURL.searchParams.get('q') || 'ミクオリジナル曲');
     param.set('targets', 'tagsExact');
+    // 再生数
     param.set('filters[viewCounter][gte]', localURL.searchParams.get('viewgte') || 100);
     param.set('filters[viewCounter][lte]', localURL.searchParams.get('viewlte') || 1000);
+    // 投稿年
+    const dategte = localURL.searchParams.get('dategte');
+    const datelt = localURL.searchParams.get('datelt');
+    if (dategte) param.set('filters[startTime][gte]', dategte.replace(' ', '+'));
+    if (datelt) param.set('filters[startTime][lt]', datelt.replace(' ', '+'));
     param.set('_limit', 1);
     // TODO: ソート方法をランダマイズ
     param.set('_sort', '-lastCommentTime');
