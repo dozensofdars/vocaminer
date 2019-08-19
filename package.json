@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/dozensofdars/vocaminer/issues"
   },
-  "homepage": "https://github.com/dozensofdars/vocaminer#readme"
+  "homepage": "https://github.com/dozensofdars/vocaminer#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  }
 }
