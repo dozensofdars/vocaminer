@@ -119,6 +119,39 @@
             <h2>検索オプション</h2>
             <!-- <div id="debug"></div> -->
             <form id="search-option" class="flexbox-column width-80">
+                <h3>投稿年</h3>
+                <div class="flexbox-row">
+                    <input type="radio" name="date" id="option-date-default" value="random" checked>
+                    <label for="option-date-default">おまかせ</label>
+                    <input type="radio" name="date" id="option-date-2007" value="2007">
+                    <label for="option-date-2007">2007年</label>
+                    <input type="radio" name="date" id="option-date-2008" value="2008">
+                    <label for="option-date-2008">2008年</label>
+                    <input type="radio" name="date" id="option-date-2009" value="2009">
+                    <label for="option-date-2009">2009年</label>
+                    <input type="radio" name="date" id="option-date-2010" value="2010">
+                    <label for="option-date-2010">2010年</label>
+                    <input type="radio" name="date" id="option-date-2011" value="2011">
+                    <label for="option-date-2011">2011年</label>
+                    <input type="radio" name="date" id="option-date-2012" value="2012">
+                    <label for="option-date-2012">2012年</label>
+                    <input type="radio" name="date" id="option-date-2013" value="2013">
+                    <label for="option-date-2013">2013年</label>
+                    <input type="radio" name="date" id="option-date-2014" value="2014">
+                    <label for="option-date-2014">2014年</label>
+                    <input type="radio" name="date" id="option-date-2015" value="2015">
+                    <label for="option-date-2015">2015年</label>
+                    <input type="radio" name="date" id="option-date-2016" value="2016">
+                    <label for="option-date-2016">2016年</label>
+                    <input type="radio" name="date" id="option-date-2017" value="2017">
+                    <label for="option-date-2017">2017年</label>
+                    <input type="radio" name="date" id="option-date-2018" value="2018">
+                    <label for="option-date-2018">2018年</label>
+                    <input type="radio" name="date" id="option-date-2019" value="2019">
+                    <label for="option-date-2019">2019年</label>
+                    <input type="radio" name="date" id="option-date-recent" value="recent">
+                    <label for="option-date-recent">直近1ヶ月</label>
+                </div>
                 <h3>再生数</h3>
                 <div class="flexbox-row">
                     <input type="radio" name="view" id="option-view-default" value="0,100000" checked>
@@ -169,18 +202,27 @@
                 while(playerElem.firstChild) playerElem.removeChild(playerElem.firstChild);
 
                 // set viewcount
-                const gte = Number(optionElem.view.value.split(',')[0]);
-                const lte = Number(optionElem.view.value.split(',')[1]);
-                const viewCountRange = lte - gte;
-                const binWidth = Math.floor(viewCountRange / 100);
-                const queryGte = gte + binWidth * Math.floor(Math.random() * 100);
-                const queryLte = queryGte + binWidth;
+                const viewGte = optionElem.view.value.split(',')[0];
+                const viewLte = optionElem.view.value.split(',')[1];
 
+                // set Date
+                let dateGte, dateLt;
+                const now = new Date();
+                if(optionElem.date.value === 'random') {
+                    dateGte = `2008-01-01T00:00:00+09:00`;
+                    dateLt = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}T00:00:00+09:00`;
+                } else if (optionElem.date.value === 'recent') {
+                    dateGte = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}T00:00:00+09:00`;
+                    dateLt = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}T00:00:00+09:00`;
+                } else {
+                    dateGte = `${optionElem.date.value}-01-01T00:00:00+09:00`;
+                    dateLt = `${Number(optionElem.date.value)+1}-01-01T00:00:00+09:00`;
+                }
                 // fetch
                 movieTitleElem.innerHTML = 'loading...';
                 // document.getElementById('debug').innerHTML = `${queryGte} ${binWidth} ${queryLte}`;
                 // fetch("https://rigorous-wholesaler.glitch.me")
-                fetch(`http://localhost:8080/?q=${optionElem.q.value}&viewgte=${queryGte}&viewlte=${queryLte}`)
+                fetch(`http://localhost:8080/?q=${optionElem.q.value}&viewgte=${viewGte}&viewlte=${viewLte}&dategte=${dateGte}&datelt=${dateLt}`)
                 .then((result) => {
                     return result.json();
                 })
