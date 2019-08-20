@@ -13,8 +13,8 @@ const getData = async(url) => {
     // 投稿年
     const dategte = localURL.searchParams.get('dategte');
     const datelt = localURL.searchParams.get('datelt');
-    if (dategte) param.set('filters[startTime][gte]', dategte.replace(' ', '+'));
-    if (datelt) param.set('filters[startTime][lt]', datelt.replace(' ', '+'));
+    if (dategte) param.set('filters[startTime][gte]', dategte);
+    if (datelt) param.set('filters[startTime][lt]', datelt);
     param.set('_limit', 1);
     // TODO: ソート方法をランダマイズ
     param.set('_sort', '-lastCommentTime');
