@@ -4,97 +4,7 @@
         <title>ボカロ曲発掘サービス「VocaMiner」</title>
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <script src="https://kit.fontawesome.com/6bdd13eaf2.js"></script>
-        <style type="text/css">
-            * {
-                margin:0px;
-                padding:0px;
-            }
-
-            .width-100 {
-                width: 100%;
-            }
-
-            .width-80 {
-                width: 80%;
-            }
-
-            .padding-tb-20{
-                padding: 20px 0px 20px 0px;
-            }
-
-            .flexbox-column{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .flexbox-row{
-                display: flex;
-                flex-flow: row wrap;
-                align-items: center;
-                justify-content: center;
-            }
-
-            body {
-                background-color: #336;
-                color: #EEE;
-            }
-
-            #header {    
-                background-color: #EEE;
-                color: #336;           
-            }
-
-            a {
-                color: #99C;
-                font-weight: bold;
-                text-decoration: none;
-            }
-
-            #content > * {
-                margin-bottom: 20px;
-            }
-
-            #footer {
-                text-align: center; 
-            }
-
-            #fetchButton{
-                background-color: #EEE;
-                color:#336;
-                font-size: 1.4em;
-                font-weight: bold;
-                text-align: center;
-                width: 160px;
-                height: 40px;
-                border-radius: 8px;
-            }
-
-            form {
-                margin-top: 1em;
-            }
-
-            input[type="radio"] {
-                display: none;
-            }
-
-            input[type="radio"]:checked + label {
-                background-color: #113;
-                color: #EEE;                
-            }
-
-            label {
-                box-sizing: border-box;
-                background-color: #EEE;
-                color: #336;
-                font-size: 0.8em;
-                font-weight: bold;
-                padding: 0.5em 1em;
-                margin: 0.5em;
-                border-radius: 8px;
-            }
-        </style>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
     <div id="app" class="flexbox-column">
@@ -117,7 +27,7 @@
             <h2 id="movie-title"></h2>
             <div id="player">
                 <p>
-                    ご利用前に「ご注意」をお読みください。
+                    ご利用前にページ下部の「ご注意」をお読みください。
                 </p>
             </div>
             <button id="fetchButton" onclick=nicoFetch()> <i class="fas fa-search"></i> 検索 </button>
@@ -216,9 +126,21 @@
             </form>
         </div>
         <div class="flexbox-column width-80 padding-tb-20">
-            <p style="font-size:4em">
+            <h2>ご注意</h2>
+            <!-- TODO: ご注意 -->
+        </div>
+        <div class="flexbox-column width-80 padding-tb-20">
+            <h2>リンク</h2>
+            <p>
                 <a target="_blank" href="https://github.com/Yumuta/vocaminer/">
                     <i class="fab fa-github"></i>
+                    VocaMiner GitHub Repository
+                </a>
+            </p>
+            <p>
+                <a target="_blank" href="https://yumuta.github.io/">
+                    <i class="fa fa-external-link"></i>
+                    Yumuta ホームページ
                 </a>
             </p>
         </div>
@@ -255,8 +177,7 @@
                 }
                 // fetch
                 movieTitleElem.innerHTML = 'loading...';
-                // document.getElementById('debug').innerHTML = `${queryGte} ${binWidth} ${queryLte}`;
-                // fetch("https://rigorous-wholesaler.glitch.me")
+                // fetch(`https://rigorous-wholesaler.glitch.me/?q=${optionElem.q.value}&viewgte=${viewGte}&viewlte=${viewLte}&dategte=${dateGte.toISOString()}&datelt=${dateLt.toISOString()}`)
                 fetch(`http://localhost:8080/?q=${optionElem.q.value}&viewgte=${viewGte}&viewlte=${viewLte}&dategte=${dateGte.toISOString()}&datelt=${dateLt.toISOString()}`)
                 .then((result) => {
                     return result.json();
@@ -279,12 +200,12 @@
                     else if(contentId.match('nm')) {
                         playerElem.innerHTML = `<a href="https://www.nicovideo.jp/watch/${contentId}" target="blank">${contentId}</a>`;
                     } else {
-                        playerElem.innerHTML = 'Cannot get movie data.';
+                        playerElem.innerHTML = '動画データを取得できませんでした。';
                     }
                     document.getElementById('tweetButton').setAttribute('href',`http://twitter.com/intent/tweet?text=${response.title} found by ボカロ曲発掘サービス「VocaMiner」&url=https://nico.ms/${response.contentId}?ref=twitter&hashtags=VocaMiner`);
                 })
                 .catch(()=>{
-                    document.getElementById('movie-title').innerHTML = "Server Error: Sorry, maintenance is needed...";
+                    document.getElementById('movie-title').innerHTML = "サーバーエラー。申し訳ございませんが、メンテナンスが必要です。";
                 })
                 .finally(()=>{
                     playerElem = null;
