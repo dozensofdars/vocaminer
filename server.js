@@ -16,8 +16,8 @@ const getData = async(url) => {
     if (dategte) param.set('filters[startTime][gte]', dategte);
     if (datelt) param.set('filters[startTime][lt]', datelt);
     param.set('_limit', 1);
-    // TODO: ソート方法をランダマイズ
-    param.set('_sort', '-lastCommentTime');
+    // ソート方法をランダマイズ
+    param.set('_sort', randomizedSortMethod());
     // TODO: contextはvocaminerでよさそう
     param.set('_context', 'apiguide');
     return new Promise(async(resolve, reject)=>{
@@ -39,8 +39,20 @@ const getData = async(url) => {
 
 const getOffset = (count) => {
     maxOffset = Math.min(1600, count);
-    return Math.floor(Math.random() * maxOffset);
+    return randInt(maxOffset);
 };
+
+const randomizedSortMethod = () => {
+    const order = ['+', '-'];
+    const sortMethod = [
+        'userId', 'viewCounter', 'mylistCounter', 'lengthSeconds', 'startTime',
+        'threadId', 'commentCounter', 'lastCommentTime', 'channelId'
+    ];
+    return order[randInt(order.length)] + sortMethod[randInt(sortMethod.length)];
+}
+
+// 0 以上 num 未満の整数をランダムに返す
+const randInt = num => Math.floor(Math.random() * num);
 
 const server = http.createServer((req, res) => {
     if(req.method !== 'GET') return;
