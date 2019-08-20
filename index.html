@@ -221,20 +221,22 @@
                 let dateGte, dateLt;
                 const now = new Date();
                 if(optionElem.date.value === 'random') {
-                    dateGte = `2008-01-01T00:00:00+09:00`;
-                    dateLt = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}T00:00:00+09:00`;
+                    dateGte = new Date(2008, 0);
+                    dateLt = now;
                 } else if (optionElem.date.value === 'recent') {
-                    dateGte = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}T00:00:00+09:00`;
-                    dateLt = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}T00:00:00+09:00`;
+                    dateGte = new Date(now);
+                    dateGte.setMonth(dateGte.getMonth() - 1);
+                    dateLt = now;
                 } else {
-                    dateGte = `${optionElem.date.value}-01-01T00:00:00+09:00`;
-                    dateLt = `${Number(optionElem.date.value)+1}-01-01T00:00:00+09:00`;
+                    const year = Number(optionElem.date.value);
+                    dateGte = new Date(year, 0);
+                    dateLt = new Date(year + 1, 0);
                 }
                 // fetch
                 movieTitleElem.innerHTML = 'loading...';
                 // document.getElementById('debug').innerHTML = `${queryGte} ${binWidth} ${queryLte}`;
                 // fetch("https://rigorous-wholesaler.glitch.me")
-                fetch(`http://localhost:8080/?q=${optionElem.q.value}&viewgte=${viewGte}&viewlte=${viewLte}&dategte=${dateGte}&datelt=${dateLt}`)
+                fetch(`http://localhost:8080/?q=${optionElem.q.value}&viewgte=${viewGte}&viewlte=${viewLte}&dategte=${dateGte.toISOString()}&datelt=${dateLt.toISOString()}`)
                 .then((result) => {
                     return result.json();
                 })
