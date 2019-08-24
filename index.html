@@ -230,7 +230,7 @@
                     } else {
                         playerElem.innerHTML = '動画データを取得できませんでした。';
                     }
-                    document.getElementById('tweetButton').setAttribute('href',`http://twitter.com/intent/tweet?text=${response.title} found by ボカロ曲発掘サービス「VocaMiner」&url=https://nico.ms/${response.contentId}?ref=twitter&hashtags=VocaMiner`);
+                    document.getElementById('tweetButton').setAttribute('href',`http://twitter.com/intent/tweet?text=${response.title} found by ボカロ曲発掘サービス「VocaMiner」&url=https://nico.ms/${response.contentId}?ref=twitter&hashtags=${response.contentId},VocaMiner`);
                 })
                 .catch(()=>{
                     document.getElementById('movie-title').innerHTML = "サーバーエラー。申し訳ございませんが、メンテナンスが必要です。";
