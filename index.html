@@ -206,7 +206,7 @@
                 }
                 // fetch
                 movieTitleElem.innerHTML = 'loading...';
-                fetch(`https://rigorous-wholesaler.glitch.me/?q=${optionElem.q.value}&viewgte=${viewGte}&viewlte=${viewLte}&dategte=${dateGte.toISOString()}&datelt=${dateLt.toISOString()}`)
+                fetch(`https://localhost:8080/?q=${optionElem.q.value}&viewgte=${viewGte}&viewlte=${viewLte}&dategte=${dateGte.toISOString()}&datelt=${dateLt.toISOString()}`)
                 .then((result) => {
                     return result.json();
                 })
