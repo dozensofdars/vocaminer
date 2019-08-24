@@ -22,7 +22,6 @@ server.jsから[ニコニココンテンツAPI](https://site.nicovideo.jp/search
 
 
 本番環境では[Glitch](https://glitch.com/)を間借りしてserver.jsを動かしています。
-https://glitch.com/~rigorous-wholesaler
 
 ## 開発について
 Yumuta・すだが中心となり、ゆるく開発しています。
